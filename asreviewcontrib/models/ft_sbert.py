@@ -13,20 +13,21 @@ class FullTextSBERTModel(BaseFeatureExtraction):
         self,
         *args,
         transformer_model="all-mpnet-base-v2",
-        combination_mode="mean",
         **kwargs
     ):
         super().__init__(*args, **kwargs)
         self.transformer_model = transformer_model
-        self.combination_mode = combination_mode
-        self.max_token_length = 384
         self.model = SentenceTransformer(transformer_model)
         self.tokenizer = self.model.tokenizer
 
     def split_text(self, text, token_limit):
-        words = text.split()
-        for i in range(0, len(words), token_limit):
-            yield ' '.join(words[i:i + token_limit])
+        tokens = self.tokenizer.tokenize(text)
+        token_ids = self.tokenizer.convert_tokens_to_ids(tokens)
+
+        for i in range(0, len(token_ids), token_limit):
+            segment_ids = token_ids[i:i + token_limit]
+            segment = self.tokenizer.convert_ids_to_tokens(segment_ids)
+            yield self.tokenizer.convert_tokens_to_string(segment)
 
     def transform(self, texts):
         print("Encoding texts with sbert, this may take a while...")
@@ -34,23 +35,14 @@ class FullTextSBERTModel(BaseFeatureExtraction):
         encoded_texts = []
 
         for text in tqdm(texts):
-            segments = list(self.split_text(text, self.max_token_length))
+            segments = list(self.split_text(text, self.model.max_seq_length))
 
             segment_embeddings = self.model.encode(segments, show_progress_bar=False)
 
-            if len(segments) > 1:
-                if self.combination_mode == "mean":
-                    combined_embedding = np.mean(segment_embeddings, axis=0)
-                elif self.combination_mode == "max":
-                    combined_embedding = np.max(segment_embeddings, axis=0)
-                elif self.combination_mode == "first":
-                    combined_embedding = segment_embeddings[0]
-                elif self.combination_mode == "last":
-                    combined_embedding = segment_embeddings[-1]
-                else:
-                    raise ValueError("Invalid combination mode. Choose 'mean', 'max', 'first', or 'last'.")
-            else:
-                combined_embedding = segment_embeddings[0]
-            encoded_texts.append(combined_embedding)
+            if len(segments) == 1:
+                    encoded_texts.append(segment_embeddings[0])
+                    continue
 
-        return encoded_texts
+            encoded_texts.append(np.mean(segment_embeddings, axis=0))
+
+        return np.array(encoded_texts)
