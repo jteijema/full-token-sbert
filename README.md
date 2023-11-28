@@ -1,36 +1,23 @@
-# Template for extending ASReview with new model
+# Template for extending ASReview with a full text sbert classifier
 
-ASReview has support for extensions, which enable you to seamlessly integrate
-your own programs with the ASReview framework. These extensions can extend the
-software with new classifiers, query strategies, balance strategies, and feature
-extraction techniques. This template can be used to write such an extension
-(add a new SKLearn naive Bayes classifier with default settings in this case).
-
-See the section [Extensions](https://asreview.readthedocs.io/en/latest/extensions_dev.html) on ReadTheDocs for more information on writing extensions.
+This repository contains a template for extending ASReview with a full text
+sbert classifier.
 
 ## Getting started
 
-Click the `Use this template` button and add/modify the algorithms. Install your new classifier with
+To get started, install the package with
 
 ```bash
-pip install .
+pip install git+https://github.com/jteijema/full-token-sbert.git
 ```
-
-or
-
-```bash
-pip install git+https://github.com/{USER_NAME}/{REPO_NAME}.git
-```
-
-and replace `{USER_NAME}` and `{REPO_NAME}` by your own details.
 
 ## Usage
 
-The new classifier `nb_example` is defined in
-[`asreviewcontrib/models/nb_default_param.py`](asreviewcontrib/models/nb_default_param.py) and can be used in a simulation.
+The new classifier `ft_sbert` is defined in
+[`asreviewcontrib/models/ft_sbert.py`](asreviewcontrib/models/ft_sbert.py) and can be used in a simulation.
 
 ```bash
-asreview simulate example_data_file.csv -m nb_example
+asreview simulate example_data_file.csv -m ft_sbert
 ```
 
 ## License
