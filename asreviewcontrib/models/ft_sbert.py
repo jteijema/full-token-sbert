@@ -1,25 +1,32 @@
-from sklearn.naive_bayes import MultinomialNB
+from sentence_transformers import models
+from sentence_transformers.SentenceTransformer import SentenceTransformer
 
-from asreview.models.classifiers.base import BaseTrainClassifier
+from asreview.models.feature_extraction.base import BaseFeatureExtraction
 
 
-class NaiveBayesDefaultParamsModel(BaseTrainClassifier):
-    """Naive Bayes classifier
-
-    The Naive Bayes classifier with the default SKLearn parameters.
+class FullTextSBERTModel(BaseFeatureExtraction):
+    """Full Text Sentence BERT model.
     """
 
-    name = "nb_example"
+    name = "ft_sbert"
+    label = "Full Text Sentence BERT"
 
-    def __init__(self):
+    def __init__(
+        self,
+        *args,
+        transformer_model="all-mpnet-base-v2",
+        is_pretrained_sbert=True,
+        pooling_mode="mean",
+        **kwargs
+    ):
+        super().__init__(*args, **kwargs)
+        self.transformer_model = transformer_model
+        self.is_pretrained_sbert = is_pretrained_sbert
+        self.pooling_mode = pooling_mode
 
-        super().__init__()
-        self._model = MultinomialNB()
+    def transform(self, texts):
+        model = SentenceTransformer(self.transformer_model)
+        print("Encoding texts using sbert, this may take a while...")
+        X = model.encode(texts, show_progress_bar=True)
 
-        def fit(self, X, y):
-            """Fit the model to the data."""
-            return self._model.fit(X, y)
-
-        def predict_proba(self, X):
-            """Get the inclusion probability for each sample."""
-            return self._model.predict_proba(X)
+        return X
