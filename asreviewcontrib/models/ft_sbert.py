@@ -21,7 +21,7 @@ class FullTextSBERTModel(BaseFeatureExtraction):
         self.tokenizer = self.model.tokenizer
 
     def split_text(self, text, token_limit):
-        tokens = self.tokenizer.tokenize(text)
+        tokens = self.tokenizer.tokenize(text, verbose=False)
         token_ids = self.tokenizer.convert_tokens_to_ids(tokens)
 
         for i in range(0, len(token_ids), token_limit):
