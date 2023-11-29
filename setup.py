@@ -23,7 +23,7 @@ setup(
     ],
     entry_points={
         'asreview.models.feature_extraction': [
-            'ft_sbert = asreviewcontrib.models:FullTextSBERTModel',
+            'ft-sbert = asreviewcontrib.models:FullTextSBERTModel',
         ]
     },
     project_urls={
