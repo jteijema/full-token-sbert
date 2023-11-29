@@ -21,13 +21,9 @@ class FullTextSBERTModel(BaseFeatureExtraction):
         self.tokenizer = self.model.tokenizer
 
     def split_text(self, text, token_limit):
-        tokens = self.tokenizer.tokenize(text, verbose=False)
-        token_ids = self.tokenizer.convert_tokens_to_ids(tokens)
-
-        for i in range(0, len(token_ids), token_limit):
-            segment_ids = token_ids[i:i + token_limit]
-            segment = self.tokenizer.convert_ids_to_tokens(segment_ids)
-            yield self.tokenizer.convert_tokens_to_string(segment)
+        words = text.split()
+        for i in range(0, len(words), token_limit):
+            yield ' '.join(words[i:i + token_limit])
 
     def transform(self, texts):
         print("Encoding texts with sbert, this may take a while...")
