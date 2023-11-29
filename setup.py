@@ -3,7 +3,7 @@ from setuptools import find_namespace_packages
 
 setup(
     name='asreview-FT-sbert',
-    version='0.1',
+    version='0.2',
     description='Full Token Sentence BERT model for ASReview',
     url='https://github.com/asreview/asreview',
     author='ASReview team',
