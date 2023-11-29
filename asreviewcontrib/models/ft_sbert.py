@@ -19,6 +19,7 @@ class FullTextSBERTModel(BaseFeatureExtraction):
         self.transformer_model = transformer_model
         self.model = SentenceTransformer(transformer_model)
         self.tokenizer = self.model.tokenizer
+        print("Max sequence length:", self.model.max_seq_length)
 
     def split_text(self, text, token_limit):
         words = text.split()
